@@ -1,25 +1,39 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app_bloc/bloc/weather_bloc.dart';
-import 'package:weather_app_bloc/bloc/weather_event.dart';
-import 'package:weather_app_bloc/data/weather_repository.dart';
+import 'package:equatable/equatable.dart';
 
-class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
-  final WeatherRepository repository;
+sealed class WeatherState extends Equatable {
+  const WeatherState();
 
-  WeatherBloc(this.repository) : super(WeatherInitial()) {
-    // Register the handler for FetchWeather event
-    on<FetchWeather>(_onFetchWeather);
-  }
+  @override
+  List<Object> get props => [];
+}
 
-  // The logic handler
-  void _onFetchWeather(FetchWeather event, Emitter<WeatherState> emit) async {
-    // TODO: 1. Emit WeatherLoading state immediately so UI shows a spinner
+class WeatherInitial extends WeatherState {
+  @override
+  List<Object> get props => [];
+}
 
-    try {
-      // TODO: 2. Call the repository to get data: await repository.fetchWeather(event.cityName)
-      // TODO: 3. If successful, emit WeatherLoaded with the data
-    } catch (e) {
-      // TODO: 4. If an error occurs, emit WeatherError with a message
-    }
-  }
+class WeatherLoading extends WeatherState {
+  @override
+  List<Object> get props => [];
+}
+
+// TODO: Complete WeatherLoaded. It needs a field to hold the temperature string.
+// HINT: Add final String weather; to the constructor and to the props list [].
+class WeatherLoaded extends WeatherState {
+  final String weather;
+
+  const WeatherLoaded(this.weather);
+
+  @override
+  List<Object> get props => [weather];
+}
+
+// TODO: Complete WeatherError. It needs a field to hold the error message.
+class WeatherError extends WeatherState {
+  final String message;
+
+  const WeatherError(this.message);
+
+  @override
+  List<Object> get props => [message];
 }

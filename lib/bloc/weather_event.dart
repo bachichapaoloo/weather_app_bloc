@@ -1,24 +1,19 @@
 import 'package:equatable/equatable.dart';
 
-sealed class WeatherState extends Equatable {
-  const WeatherState();
+sealed class WeatherEvent extends Equatable {
+  const WeatherEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class WeatherInitial extends WeatherState {}
+class FetchWeather extends WeatherEvent {
+  final String cityName;
 
-class WeatherLoading extends WeatherState {}
+  const FetchWeather(this.cityName);
 
-class WeatherLoaded extends WeatherState {
-  late final String weather;
-  // TODO: Create constructor to accept 'weather' string
-  // TODO: Add 'weather' to the 'props' list so Equatable can detect changes
-}
+  @override
+  List<Object> get props => [cityName];
 
-class WeatherError extends WeatherState {
-  late final String message;
-  // TODO: Create constructor to accept 'message' string
-  // TODO: Add 'message' to the 'props' list
+  
 }

@@ -1,18 +1,30 @@
-import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app_bloc/bloc/weather_event.dart';
+import 'package:weather_app_bloc/bloc/weather_state.dart';
+import 'package:weather_app_bloc/data/weather_repository.dart';
 
-sealed class WeatherEvent extends Equatable {
-  const WeatherEvent();
+class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
+  final WeatherRepository repository;
 
-  @override
-  List<Object> get props => [];
-}
+  WeatherBloc(this.repository) : super(WeatherInitial()) {
+    on<FetchWeather>((event, emit) async {
+      // TODO: Implement this event handler!
+      // 1. Emit WeatherLoading() immediately.
+      emit(WeatherLoading());
 
-// User types a city and presses a button -> This event is fired.
-class FetchWeather extends WeatherEvent {
-  final String cityName;
+      // 2. Use try/catch block.
+      try {
+        final result = await repository.fetchWeather(event.cityName);
+        final temperature = await repository.fetchWeatherTemperature(event.cityName);
+        emit(WeatherLoaded(result,));
+      } catch (e) {
+        emit(WeatherError('Something went wrong: $e'));
+      }
 
-  const FetchWeather(this.cityName);
+      // 3. Inside try: await repository.fetchWeather(event.cityName) and emit WeatherLoaded(result).
+      await repository.fetchWeather(event.cityName).then((result) => emit(WeatherLoaded(result)));
 
-  @override
-  List<Object> get props => [cityName]; // Equatable needs this to compare events
+      // 4. Inside catch: emit WeatherError("Something went wrong").
+    });
+  }
 }
