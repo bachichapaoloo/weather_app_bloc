@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:weather_app_bloc/models/weather_model.dart';
 
 sealed class WeatherState extends Equatable {
   const WeatherState();
@@ -7,20 +8,12 @@ sealed class WeatherState extends Equatable {
   List<Object> get props => [];
 }
 
-class WeatherInitial extends WeatherState {
-  @override
-  List<Object> get props => [];
-}
+class WeatherInitial extends WeatherState {}
 
-class WeatherLoading extends WeatherState {
-  @override
-  List<Object> get props => [];
-}
+class WeatherLoading extends WeatherState {}
 
-// TODO: Complete WeatherLoaded. It needs a field to hold the temperature string.
-// HINT: Add final String weather; to the constructor and to the props list [].
 class WeatherLoaded extends WeatherState {
-  final String weather;
+  final Weather weather;
 
   const WeatherLoaded(this.weather);
 
@@ -28,7 +21,6 @@ class WeatherLoaded extends WeatherState {
   List<Object> get props => [weather];
 }
 
-// TODO: Complete WeatherError. It needs a field to hold the error message.
 class WeatherError extends WeatherState {
   final String message;
 

@@ -37,6 +37,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
   http: ^1.5.0
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -61,9 +62,17 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/lottie/cat_loading.json
+    - assets/lottie/check.json
+    - assets/lottie/error_404.json
+    - assets/lottie/weather_mist.json
+    - assets/lottie/weather_partly_shower.json
+    - assets/lottie/weather_storm.json
+    - assets/lottie/weather_thunder.json
+    - assets/lottie/weather_windy.json
+    - assets/lottie/weather_sunny.json
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
