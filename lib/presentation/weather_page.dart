@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart'; // Add this for animations
 import 'package:weather_app_bloc/bloc/weather_bloc.dart';
 import 'package:weather_app_bloc/bloc/weather_event.dart';
@@ -80,6 +83,90 @@ class _WeatherPageState extends State<WeatherPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(weather.description, style: const TextStyle(fontSize: 24)),
+                          SizedBox(
+                            height: 180,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: weather.dailyForecasts.length,
+                              itemBuilder: (context, index) {
+                                final day = weather.dailyForecasts[index];
+
+                                // Parse your string date to DateTime
+                                // Assuming day.day is like "2025-11-09"
+                                final date = DateTime.tryParse(day.day);
+
+                                // If parsing fails, you can fallback to current date
+                                if (date == null) {
+                                  return const SizedBox();
+                                }
+
+                                // Format the date for UI
+                                final formattedDay = DateFormat('EEE').format(date); // e.g. Mon
+                                final formattedDate = DateFormat('MMM d').format(date); // e.g. Nov 9
+
+                                return Container(
+                                  width: 130,
+                                  margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.blue.shade400.withOpacity(0.9),
+                                        Colors.blue.shade200.withOpacity(0.8),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: const Offset(2, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          formattedDay, // Monday, Tuesday, etc.
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Text(
+                                          formattedDate, // Nov 9, etc.
+                                          style: const TextStyle(fontSize: 12, color: Colors.white70),
+                                        ),
+                                        const SizedBox(height: 8),
+
+                                        Lottie.asset('assets/lottie/${day.icon}', width: 50, height: 50, repeat: true),
+
+                                        const SizedBox(height: 8),
+
+                                        Text(
+                                          "Max: ${day.maxTemp.toStringAsFixed(1)}°C",
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Min: ${day.minTemp.toStringAsFixed(1)}°C",
+                                          style: const TextStyle(fontSize: 11, color: Colors.white70),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ],
                       );
                     } else if (state is WeatherError) {

@@ -19,12 +19,6 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       } catch (e) {
         emit(WeatherError('Something went wrong: $e'));
       }
-
-      // 3. Inside try: await repository.fetchWeather(event.cityName) and emit WeatherLoaded(result).
-      await repository.fetchWeather(event.cityName).then((result) => emit(WeatherLoaded(result)));
-
-      // 4. Inside catch: emit WeatherError("Something went wrong").
-      
     });
   }
 }

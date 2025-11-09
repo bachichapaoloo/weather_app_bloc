@@ -26,7 +26,7 @@ class WeatherRepository {
 
       // 2. Get current weather
       final weatherUrl = Uri.parse(
-        'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true',
+        'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto',
       );
       final weatherResponse = await http.get(weatherUrl);
 
@@ -35,7 +35,10 @@ class WeatherRepository {
       }
 
       final weatherData = jsonDecode(weatherResponse.body);
+      final dailyData = weatherData['daily'];
       final current = weatherData['current_weather'];
+
+      final dailyForecast = _parseDailyForecast(dailyData);
 
       final temp = (current['temperature'] as num).toDouble();
       final weatherCode = current['weathercode'] ?? 0;
@@ -48,10 +51,43 @@ class WeatherRepository {
         temperature: temp,
         description: weatherInfo['description']!,
         icon: weatherInfo['icon']!,
+        dailyForecasts: dailyForecast,
       );
     } catch (e) {
       throw Exception('Error fetching weather: $e');
     }
+  }
+
+  List<DailyForecast> _parseDailyForecast(Map<String, dynamic> dailyData) {
+    List<DailyForecast> forecasts = [];
+
+    // 1. Determine how many days we have. The 'time' list is a safe bet.
+    List<dynamic> dates = dailyData['time'];
+
+    // 2. Loop through the indices
+    for (int i = 0; i < dates.length; i++) {
+      // 3. Extract data for the current index 'i' from each parallel list
+      final dateStr = dates[i];
+      final maxTemp = dailyData['temperature_2m_max'][i];
+      // TODO: extract minTemp using the same pattern: dailyData['temperature_2m_min'][i]
+      final weatherCodeInt = dailyData['weathercode'][i];
+      final minTemp = dailyData['temperature_2m_min'][i];
+
+      // 4. Reuse your existing helper to get the icon for this day
+      final weatherInfo = _mapWeatherCode(weatherCodeInt);
+
+      // 5. Create the object and add it to your list
+      forecasts.add(
+        DailyForecast(
+          day: dateStr, // You might want to format this later to say "Mon", "Tue" etc.
+          icon: weatherInfo['icon']!,
+          maxTemp: (maxTemp as num).toDouble(),
+          minTemp: (minTemp as num).toDouble(),
+        ),
+      );
+    }
+
+    return forecasts;
   }
 
   Map<String, String> _mapWeatherCode(int code) {
