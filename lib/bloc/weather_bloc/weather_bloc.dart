@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app_bloc/bloc/weather_event.dart';
-import 'package:weather_app_bloc/bloc/weather_state.dart';
+import 'package:weather_app_bloc/bloc/weather_bloc/weather_event.dart';
+import 'package:weather_app_bloc/bloc/weather_bloc/weather_state.dart';
 import 'package:weather_app_bloc/data/weather_repository.dart';
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {

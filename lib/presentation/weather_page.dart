@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart'; // Add this for animations
-import 'package:weather_app_bloc/bloc/weather_bloc.dart';
-import 'package:weather_app_bloc/bloc/weather_event.dart';
-import 'package:weather_app_bloc/bloc/weather_state.dart';
+import 'package:weather_app_bloc/bloc/weather_bloc/weather_bloc.dart';
+import 'package:weather_app_bloc/bloc/weather_bloc/weather_event.dart';
+import 'package:weather_app_bloc/bloc/weather_bloc/weather_state.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -28,6 +28,32 @@ class _WeatherPageState extends State<WeatherPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            /// === Search Area ===
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: cityController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter City',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    final city = cityController.text.trim();
+                    if (city.isNotEmpty) {
+                      context.read<WeatherBloc>().add(FetchWeather(city));
+                    }
+                  },
+                  child: const Text("Get"),
+                ),
+              ],
+            ),
+
             /// === Main Content Area ===
             Expanded(
               child: Center(
@@ -175,11 +201,6 @@ class _WeatherPageState extends State<WeatherPage> {
                         children: [
                           Lottie.asset('assets/lottie/error_404.json', width: 500),
                           const SizedBox(height: 12),
-                          // Text(
-                          //   state.message,
-                          //   textAlign: TextAlign.center,
-                          //   style: const TextStyle(color: Colors.red, fontSize: 18),
-                          // ),
                         ],
                       );
                     } else if (state is WeatherError) {
@@ -196,32 +217,6 @@ class _WeatherPageState extends State<WeatherPage> {
                   },
                 ),
               ),
-            ),
-
-            /// === Search Area ===
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: cityController,
-                    decoration: const InputDecoration(
-                      labelText: 'Enter City',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    final city = cityController.text.trim();
-                    if (city.isNotEmpty) {
-                      context.read<WeatherBloc>().add(FetchWeather(city));
-                    }
-                  },
-                  child: const Text("Get"),
-                ),
-              ],
             ),
           ],
         ),
