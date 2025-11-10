@@ -38,6 +38,7 @@ class _WeatherPageState extends State<WeatherPage> {
               onChanged: (value) {
                 context.read<SettingsBloc>().add(ToggleTheme());
               },
+              secondary: const Icon(Icons.brightness_6),
             ),
             SwitchListTile(
               title: const Text('Use Celsius'),
@@ -45,6 +46,7 @@ class _WeatherPageState extends State<WeatherPage> {
               onChanged: (value) {
                 context.read<SettingsBloc>().add(ToggleUnit());
               },
+              secondary: const Icon(Icons.thermostat),
             ),
           ],
         ),

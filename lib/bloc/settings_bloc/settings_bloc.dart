@@ -12,6 +12,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<LoadSettings>(_onLoadSettings);
     on<ToggleUnit>(_onToggleUnit);
     on<ToggleTheme>(_onToggleTheme);
+
+    add(LoadSettings());
   }
 
   Future<void> _onLoadSettings(LoadSettings event, Emitter<SettingsState> emit) async {

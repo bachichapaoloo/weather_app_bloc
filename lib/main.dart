@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app_bloc/bloc/settings_bloc/settings_bloc.dart';
+import 'package:weather_app_bloc/bloc/settings_bloc/settings_state.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_bloc.dart';
 import 'package:weather_app_bloc/data/settings_service.dart';
 import 'package:weather_app_bloc/data/weather_repository.dart';
@@ -30,6 +31,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: const WeatherPage());
+    return BlocBuilder<SettingsBloc, SettingsState>(
+      builder: (context, state) {
+        final SettingsBloc settingsBloc = context.read<SettingsBloc>();
+        final isDarkMode = settingsBloc.state.isDarkMode;
+        final themeData = isDarkMode ? ThemeData.dark() : ThemeData.light();
+        return MaterialApp(debugShowCheckedModeBanner: false, theme: themeData, home: const WeatherPage());
+      },
+    );
   }
 }
