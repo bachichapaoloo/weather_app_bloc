@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart'; // Add this for animations
+import 'package:weather_app_bloc/bloc/settings_bloc/settings_bloc.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_bloc.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_event.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_state.dart';
@@ -23,6 +24,30 @@ class _WeatherPageState extends State<WeatherPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Weather App", style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.all(0),
+          children: [
+            const DrawerHeader(
+              child: Text('Settings', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            ),
+            SwitchListTile(
+              title: const Text('Use Dark Mode'),
+              value: context.select((SettingsBloc bloc) => bloc.state.isDarkMode),
+              onChanged: (value) {
+                context.read<SettingsBloc>().add(ToggleTheme());
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Use Celsius'),
+              value: context.select((SettingsBloc bloc) => bloc.state.isCelsius),
+              onChanged: (value) {
+                context.read<SettingsBloc>().add(ToggleUnit());
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
