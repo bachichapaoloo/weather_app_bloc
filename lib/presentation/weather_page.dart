@@ -21,6 +21,8 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
+    final weatherTemp = context.watch<SettingsBloc>().state;
+    final weatherUnit = weatherTemp.isCelsius;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Weather App", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -131,9 +133,12 @@ class _WeatherPageState extends State<WeatherPage> {
                           Text(weather.cityName, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 6),
                           Text(
-                            "${weather.temperature.toStringAsFixed(1)}°C",
+                            weatherUnit
+                                ? '${weather.temperature.toStringAsFixed(1)}°C'
+                                : '${((weather.temperature * 9 / 5) + 32).toStringAsFixed(1)}°F',
                             style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                           ),
+
                           const SizedBox(height: 8),
                           Text(weather.description, style: const TextStyle(fontSize: 24)),
                           SizedBox(
@@ -202,15 +207,20 @@ class _WeatherPageState extends State<WeatherPage> {
                                         const SizedBox(height: 8),
 
                                         Text(
-                                          "Max: ${day.maxTemp.toStringAsFixed(1)}°C",
+                                          weatherUnit
+                                              ? 'Max: ${day.maxTemp.toStringAsFixed(1)}°C'
+                                              : 'Max: ${((day.maxTemp * 9 / 5) + 32).toStringAsFixed(1)}°F',
                                           style: const TextStyle(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w500,
                                             color: Colors.white,
                                           ),
                                         ),
+
                                         Text(
-                                          "Min: ${day.minTemp.toStringAsFixed(1)}°C",
+                                          weatherUnit
+                                              ? 'Min: ${day.minTemp.toStringAsFixed(1)}°C'
+                                              : 'Min: ${((day.minTemp * 9 / 5) + 32).toStringAsFixed(1)}°F',
                                           style: const TextStyle(fontSize: 11, color: Colors.white70),
                                         ),
                                       ],
