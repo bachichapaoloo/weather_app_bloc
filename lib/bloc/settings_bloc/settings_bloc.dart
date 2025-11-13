@@ -12,6 +12,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<LoadSettings>(_onLoadSettings);
     on<ToggleUnit>(_onToggleUnit);
     on<ToggleTheme>(_onToggleTheme);
+    on<LoadSearchHistory>(_onLoadSearchHistory);
+    on<AddCityToHistory>(_onAddCityToHistory);
+    on<ClearSearchHistory>(_onClearSearchHistory);
 
     add(LoadSettings());
   }
@@ -19,18 +22,40 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Future<void> _onLoadSettings(LoadSettings event, Emitter<SettingsState> emit) async {
     final isCelsius = await settingsService.getUnit();
     final isDarkMode = await settingsService.getTheme();
+
     emit(state.copyWith(isCelsius: isCelsius, isDarkMode: isDarkMode));
   }
 
   Future<void> _onToggleUnit(ToggleUnit event, Emitter<SettingsState> emit) async {
     final newUnit = !state.isCelsius;
     await settingsService.setUnit(newUnit);
+
     emit(state.copyWith(isCelsius: newUnit));
   }
 
   Future<void> _onToggleTheme(ToggleTheme event, Emitter<SettingsState> emit) async {
     final newTheme = !state.isDarkMode;
     await settingsService.setTheme(newTheme);
+
     emit(state.copyWith(isDarkMode: newTheme));
+  }
+
+  Future<void> _onLoadSearchHistory(LoadSearchHistory event, Emitter<SettingsState> emit) async {
+    final history = await settingsService.getSearchHistory();
+
+    emit(state.copyWith(searchHistory: history));
+  }
+
+  Future<void> _onAddCityToHistory(AddCityToHistory event, Emitter<SettingsState> emit) async {
+    await settingsService.addCityToHistory(event.city);
+    final history = await settingsService.getSearchHistory();
+
+    emit(state.copyWith(searchHistory: history));
+  }
+
+  Future<void> _onClearSearchHistory(ClearSearchHistory event, Emitter<SettingsState> emit) async {
+    await settingsService.clearSearchHistory();
+
+    emit(state.copyWith(searchHistory: []));
   }
 }

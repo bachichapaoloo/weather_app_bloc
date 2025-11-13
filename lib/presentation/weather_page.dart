@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart'; // Add this for animations
 import 'package:weather_app_bloc/bloc/settings_bloc/settings_bloc.dart';
+import 'package:weather_app_bloc/bloc/settings_bloc/settings_state.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_bloc.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_event.dart';
 import 'package:weather_app_bloc/bloc/weather_bloc/weather_state.dart';
@@ -17,7 +18,12 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  final TextEditingController cityController = TextEditingController();
+  late TextEditingController cityController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +88,52 @@ class _WeatherPageState extends State<WeatherPage> {
                 ),
               ],
             ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  BlocBuilder<SettingsBloc, SettingsState>(
+                    builder: (context, settingsState) {
+                      final history = settingsState.searchHistory;
+                      if (history.isEmpty) {
+                        return const SizedBox();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            Wrap(
+                              spacing: 8.0,
+                              children: history.map((city) {
+                                return ChoiceChip(
+                                  label: Text(city),
+                                  selected: false,
+                                  onSelected: (selected) {
+                                    cityController.text = city;
+                                    context.read<WeatherBloc>().add(FetchWeather(city));
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(width: 5),
+                            ChoiceChip(
+                              avatar: Icon(Icons.clear, color: Colors.red),
+                              label: Text('Clear'),
+                              selected: false,
+                              backgroundColor: Colors.red.withOpacity(0.1),
+                              onSelected: (_) => context.read<SettingsBloc>().add(ClearSearchHistory()),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 25),
 
             /// === Main Content Area ===
             Expanded(

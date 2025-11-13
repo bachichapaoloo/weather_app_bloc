@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import '../models/weather_model.dart';
 
@@ -112,6 +113,42 @@ class WeatherRepository {
     } else {
       // Default fallback
       return {'description': 'Unknown', 'icon': 'weather_partly_shower.json'};
+    }
+  }
+
+  Future<Weather> fetchWeatherByCoordinates(Position position) async {
+    try {
+      // 1. Get current weather
+      final geoUrl = Uri.parse(
+        'https://geocoding-api.open-meteo.com/v1/reverse?latitude=${position.latitude}&longitude=${position.longitude}&current_weather=true',
+      );
+      final geoResponse = await http.get(geoUrl);
+
+      if (geoResponse.statusCode != 200) {
+        throw Exception('Failed to get weather data for current location');
+      }
+
+      final weatherData = jsonDecode(geoResponse.body);
+      final dailyData = weatherData['daily'];
+      final current = weatherData['current_weather'];
+
+      final dailyForecast = _parseDailyForecast(dailyData);
+
+      final temp = (current['temperature'] as num).toDouble();
+      final weatherCode = current['weathercode'] ?? 0;
+
+      // Use a small helper to map weathercode to an icon & description
+      final weatherInfo = _mapWeatherCode(weatherCode);
+
+      return Weather(
+        cityName: 'Current Location',
+        temperature: temp,
+        description: weatherInfo['description']!,
+        icon: weatherInfo['icon']!,
+        dailyForecasts: dailyForecast,
+      );
+    } catch (e) {
+      throw Exception('Error fetching weather: $e');
     }
   }
 }
